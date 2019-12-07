@@ -41,7 +41,9 @@ public class TestBeliefsAgent extends Agent {
 
 
   // command line arguments
+  static final String optBeliefs = "--beliefs";
   static final String optCardinality = "--cardinality";
+  static final String optJavaInts = "--as-java-ints";
 
   // usage message
   private static final String usageMessage = "usage:\n"
@@ -49,11 +51,15 @@ public class TestBeliefsAgent extends Agent {
           ;
 
   // Defaults
-
   private static Random rand = new Random();
-  private static int valCardinality = 2;
+  private static int valBeliefs = 0;
+  private static int valCardinality = 1;
+  private static boolean asJavInts = false;
 
   private static final String beliefset = "beliefset";
+
+  // For storing java beliefs globally for the agent
+  int[] javaBeliefs = null;
 
   public TestBeliefsAgent(String name) {
     super(name);
@@ -66,17 +72,30 @@ public class TestBeliefsAgent extends Agent {
     // Parse the arguments
     parse(params);
 
-    if (valCardinality != 0) {
+    // Store as Java ints
+    if (asJavInts) {
+      javaBeliefs = new int[valBeliefs];
+      // Add javaBeliefs
+      for (int i = 0; i < valBeliefs; i++) {
+        javaBeliefs[i] = rand.nextInt(valCardinality);
+      }
+
+      return;
+    }
+
+    // Store as Jill beliefs
+    if (valBeliefs != 0 && valCardinality != 0) {
       // Create a new belief set with an attribute with the given cardinality
-      BeliefSetField[] fields = {new BeliefSetField("value", Integer.class, true)};
+      BeliefSetField[] fields = {new BeliefSetField("value", Integer.class, false)};
 
       try {
         // Attach this belief set to this agent
         this.createBeliefSet(beliefset, fields);
 
-        // Add beliefs about neighbours
-        this.addBelief(beliefset, rand.nextInt(valCardinality));
-
+        // Add beliefs
+        for (int i = 0; i < valBeliefs; i++) {
+          this.addBelief(beliefset, rand.nextInt(valCardinality));
+        }
       } catch (BeliefBaseException e) {
         Log.error(e.getMessage());
       }
@@ -92,9 +111,19 @@ public class TestBeliefsAgent extends Agent {
   void parse(String[] args) {
     for (int i = 0; i < args.length; i++) {
       switch (args[i]) {
+        case optBeliefs:
+          if (i + 1 < args.length) {
+            valBeliefs = Integer.parseInt(args[++i]);
+          }
+          break;
         case optCardinality:
           if (i + 1 < args.length) {
             valCardinality = Integer.parseInt(args[++i]);
+          }
+          break;
+        case optJavaInts:
+          if (i + 1 < args.length) {
+            asJavInts = Boolean.parseBoolean(args[++i]);
           }
           break;
         default:

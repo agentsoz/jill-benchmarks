@@ -13,7 +13,7 @@
         <dependency>
             <groupId>io.github.agentsoz</groupId>
             <artifactId>jill</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1-SNAPSHOT</version>
         </dependency>
         <!-- JUnit for unit testing -->
         <dependency>
@@ -41,7 +41,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.9</version>
                 <configuration>
-                    <argLine>-Xmx4g -Xms4g</argLine>
+                    <argLine>-Xmx8g -Xms8g -XX:+UseG1GC</argLine>
                 </configuration>
             </plugin>
         </plugins>

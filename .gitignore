@@ -2,4 +2,6 @@ target/
 .settings/
 .idea/
 *.iml
+Run.log
+
 
