@@ -25,7 +25,7 @@ public class ABeliefStoreTest {
         PrintWriter out = null;
         try {
             out = new PrintWriter(new FileWriter(outfile), true);
-            out.println("type,repeats,beliefs,cardinality,agents,mem_mb");
+            out.println("type,repeats,beliefs,cardinality,agents,mem_kb");
 
             for (int i = 0; i < optBeliefs.length; i++) {
                 for (int j = 0; j < optCardinality.length; j++) {
@@ -35,7 +35,7 @@ public class ABeliefStoreTest {
                         int agents = optAgents[k];
 
                         // Calculate the cost of storing each belief as a java int (4 bytes); repeats don't matter
-                        double javaSize = 4 * agents / (1024.0 * 1024); // size in MB
+                        double javaSize = 4 * agents / (1024.0); // size in KB
                         javaSize *= beliefs; // break the computation so that we don't overflow double on large nums
 
                         // Now calculate the cost of storing the same in Jill; repeat to account for random effect
@@ -59,22 +59,22 @@ public class ABeliefStoreTest {
                                 }
 
                                 // get mem upper bound given current beliefs
-                                jillSize += beliefbase.memoryUpperBoundInBytes() / (1024.0 * 1024); // size in MB
+                                jillSize += beliefbase.memoryUpperBoundInBytes() / (1024.0); // size in KB
 
                             } catch (BeliefBaseException e) {
                                 throw new RuntimeException(e);
                             }
                         }
                         jillSize /= repeats;
-                        System.out.println(String.format("Type:%5s, Repeats:%3d, Beliefs:%7d, Cardinality:%7d, Agents:%8d, Mem_MB(avg):%8.3f MB",
+                        System.out.println(String.format("Type:%5s, Repeats:%3d, Beliefs:%7d, Cardinality:%7d, Agents:%8d, Mem_KB(avg):%10.2f",
                                 "java", repeats, beliefs, cardinality, agents, javaSize));
-                        System.out.println(String.format("Type:%5s, Repeats:%3d, Beliefs:%7d, Cardinality:%7d, Agents:%8d, Mem_MB(avg):%8.3f MB",
+                        System.out.println(String.format("Type:%5s, Repeats:%3d, Beliefs:%7d, Cardinality:%7d, Agents:%8d, Mem_KB(avg):%10.2f",
                                 "jill", repeats, beliefs, cardinality, agents, jillSize));
                         System.out.flush();
-                        out.println(String.format("%s,%d,%d,%d,%d,%.3f",
+                        out.println(String.format("%s,%d,%d,%d,%d,%.2f",
                                 "java", repeats, beliefs, cardinality, agents, javaSize));
-                        out.println(String.format("%s,%d,%d,%d,%d,%.3f",
-                                "java", repeats, beliefs, cardinality, agents, jillSize));
+                        out.println(String.format("%s,%d,%d,%d,%d,%.2f",
+                                "jill", repeats, beliefs, cardinality, agents, jillSize));
                     }
                 }
             }
