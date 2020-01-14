@@ -18,7 +18,7 @@ public class ABeliefStoreTest {
     public void testTheoreticalMemoryUsage() {
         final int repeats = 20;
         final int[] optAgents = {1000000, 100000, 10000, 1000, 100, 10};
-        final int[] optCardinality = {10000, 1000, 100, 10, 1};
+        final int[] optCardinality = {1000, 100, 10, 1};
         final int[] optBeliefs = {100, 10, 1};
 
         final String outfile = "./testABeliefStore-Theoretical-Ints.csv";
@@ -43,6 +43,7 @@ public class ABeliefStoreTest {
                         for (int r=0; r < repeats; r++) {
                             // Create a new belief set with an attribute with the given cardinality
                             BeliefSetField[] fields = {
+                                    new BeliefSetField("key", Integer.class, false),
                                     new BeliefSetField("value", Integer.class, false)};
                             try {
                                 final String beliefset = "beliefset";
@@ -53,13 +54,14 @@ public class ABeliefStoreTest {
                                     // Attach this belief set to this agent
                                     beliefbase.createBeliefSet(agent, beliefset, fields);
                                     // Add beliefs
-                                    for (int b = 0; b < beliefs; b++) {
-                                        beliefbase.addBelief(agent, beliefset, rand.nextInt(cardinality));
+                                    for (int belief = 0; belief < beliefs; belief++) {
+                                        beliefbase.addBelief(agent, beliefset, belief, rand.nextInt(cardinality));
                                     }
                                 }
 
                                 // get mem upper bound given current beliefs
-                                jillSize += beliefbase.memoryUpperBoundInBytes() / (1024.0); // size in KB
+                                jillSize += beliefbase.memoryUpperBoundInBytes() / (1024.0); // size of bitmap in KB
+                                jillSize += 4*beliefs / (1024.0); // plus size of the beliefs themselves in KB
 
                             } catch (BeliefBaseException e) {
                                 throw new RuntimeException(e);
